@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campus Cycle Rush: 8:59 AM | 2D Arcade Game</title>
+  <link rel="stylesheet" href="style.css">
+  <!-- Retro arcade font from Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Outfit:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="arcade-cabinet">
+    <!-- Top Header -->
+    <header class="cabinet-header">
+      <div class="header-badge">MULTIMEDIA SYSTEMS LAB — TEST 2</div>
+      <h1 class="game-title">CAMPUS CYCLE RUSH</h1>
+      <div class="subtitle">TARGET: REACH LAB BEFORE 9:00 AM!</div>
+    </header>
+
+    <!-- Main Game Container -->
+    <div class="game-container" id="gameContainer">
+      <!-- Heads-Up Display (HUD) -->
+      <div class="hud" id="hud">
+        <div class="hud-item">
+          <span class="hud-label">TIME</span>
+          <span class="hud-value" id="hudClock">08:58:00</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">ATTENDANCE</span>
+          <div class="bar-container">
+            <div class="bar-fill" id="attendanceBar"></div>
+          </div>
+          <span class="hud-value" id="attendanceText">100%</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">DISTANCE</span>
+          <span class="hud-value" id="hudDistance">600m</span>
+        </div>
+        <div class="hud-item">
+          <span class="hud-label">SCORE</span>
+          <span class="hud-value" id="hudScore">0</span>
+        </div>
+      </div>
+
+      <!-- Power-Up Shield Indicator -->
+      <div class="powerup-badge" id="shieldBadge">
+        🛡️ HALL TICKET SHIELD ACTIVE!
+      </div>
+
+      <!-- HTML5 Canvas for Game Rendering -->
+      <canvas id="gameCanvas" width="540" height="720"></canvas>
+
+      <!-- START OVERLAY SCREEN -->
+      <div class="overlay-screen active" id="startScreen">
+        <div class="overlay-box">
+          <div class="terminal-tag">🚨 8:58 AM — DOORS CLOSE AT 9:00 AM</div>
+          <h2>CAMPUS CYCLE RUSH</h2>
+          <p class="mission-desc">
+            You are late for your <strong>Multimedia Systems Lab Test</strong>! 
+            Pedal through campus walkways, pick up your lost documents, and dodge campus hazards.
+          </p>
+
+          <div class="guide-grid">
+            <div class="guide-col">
+              <h3>COLLECT (+PTS)</h3>
+              <div class="guide-item"><span class="icon">🪪</span> <span><strong>ID Card:</strong> +30 Pts</span></div>
+              <div class="guide-item"><span class="icon">☕</span> <span><strong>Canteen Coffee:</strong> Speed Boost</span></div>
+              <div class="guide-item"><span class="icon">📑</span> <span><strong>Assignment:</strong> +20 Pts</span></div>
+              <div class="guide-item"><span class="icon">🎟️</span> <span><strong>Hall Ticket:</strong> 5s Invincible Shield</span></div>
+            </div>
+            <div class="guide-col">
+              <h3>AVOID (HAZARDS)</h3>
+              <div class="guide-item"><span class="icon">🐕</span> <span><strong>Campus Dog:</strong> -20% Attendance</span></div>
+              <div class="guide-item"><span class="icon">💦</span> <span><strong>Mud Puddle:</strong> Slows & Skids</span></div>
+              <div class="guide-item"><span class="icon">👨‍🏫</span> <span><strong>Strict Prof:</strong> -30% Attendance</span></div>
+              <div class="guide-item"><span class="icon">🚧</span> <span><strong>Road Barricade:</strong> Crash Damage</span></div>
+            </div>
+          </div>
+
+          <div class="controls-panel">
+            <strong>CONTROLS:</strong> 
+            <span><code>A / D</code> or <code>← / →</code> to Steer</span> | 
+            <span><code>W / S</code> or <code>↑ / ↓</code> Speed/Brake</span> | 
+            <span><code>SPACE</code> Ring Bell</span> | 
+            <span><code>P</code> Pause</span>
+            <div class="touch-hint">(Mouse drag / touch buttons also supported)</div>
+          </div>
+
+          <button id="btnStart" class="arcade-btn start-btn">START PEDALING [ENTER]</button>
+        </div>
+      </div>
+
+      <!-- PAUSE OVERLAY SCREEN -->
+      <div class="overlay-screen" id="pauseScreen">
+        <div class="overlay-box compact">
+          <h2>GAME PAUSED</h2>
+          <p>Taking a breath on the campus bench...</p>
+          <div class="pause-stats">
+            <div>Current Score: <span id="pauseScore">0</span></div>
+            <div>Remaining Distance: <span id="pauseDistance">0m</span></div>
+          </div>
+          <button id="btnResume" class="arcade-btn">RESUME [P]</button>
+          <button id="btnRestartFromPause" class="arcade-btn secondary">RESTART</button>
+        </div>
+      </div>
+
+      <!-- GAME OVER SCREEN (DEFEAT) -->
+      <div class="overlay-screen" id="gameOverScreen">
+        <div class="overlay-box">
+          <div class="terminal-tag danger">❌ TEST ENTRY DENIED</div>
+          <h2 id="gameOverTitle">ATTENDANCE SHORTAGE!</h2>
+          <p id="gameOverReason" class="game-over-desc">
+            Your attendance dropped below the 75% eligibility criteria.
+          </p>
+
+          <div class="results-card">
+            <div class="result-row">
+              <span>Final Score:</span>
+              <strong id="finalScore">0</strong>
+            </div>
+            <div class="result-row">
+              <span>Distance Covered:</span>
+              <strong id="finalDistance">0m</strong>
+            </div>
+            <div class="result-row">
+              <span>Items Collected:</span>
+              <strong id="finalItems">0</strong>
+            </div>
+            <div class="result-row">
+              <span>High Score:</span>
+              <strong id="highScoreText">0</strong>
+            </div>
+          </div>
+
+          <button id="btnRestart" class="arcade-btn retry-btn">TRY AGAIN [SPACE]</button>
+        </div>
+      </div>
+
+      <!-- VICTORY SCREEN (SUCCESS) -->
+      <div class="overlay-screen" id="victoryScreen">
+        <div class="overlay-box victory">
+          <div class="terminal-tag success">🎉 08:59:58 AM — MADE IT IN TIME!</div>
+          <h2>LAB EXAM UNLOCKED!</h2>
+          <p class="mission-desc">
+            You skidded right into Lab 204 just as the examiner picked up the question papers!
+          </p>
+
+          <div class="results-card">
+            <div class="result-row">
+              <span>Final Exam Score:</span>
+              <strong id="victoryScore">0</strong>
+            </div>
+            <div class="result-row">
+              <span>Final Attendance:</span>
+              <strong id="victoryAttendance">100%</strong>
+            </div>
+            <div class="result-row">
+              <span>Time Taken:</span>
+              <strong id="victoryTime">01:52</strong>
+            </div>
+            <div class="result-row">
+              <span>Grade Rank:</span>
+              <strong class="grade-text">S+ (PERFECT RUN)</strong>
+            </div>
+          </div>
+
+          <button id="btnVictoryRestart" class="arcade-btn victory-btn">PLAY AGAIN [SPACE]</button>
+        </div>
+      </div>
+
+      <!-- On-Screen Controls for Mobile / Mouse clickers -->
+      <div class="touch-controls">
+        <button id="touchLeft" class="touch-btn">◀ LEFT</button>
+        <button id="touchBell" class="touch-btn bell-btn">🔔 BELL</button>
+        <button id="touchRight" class="touch-btn">RIGHT ▶</button>
+      </div>
+    </div>
+
+    <!-- Cabinet Footer / Audio Controls -->
+    <footer class="cabinet-footer">
+      <div class="audio-toggle">
+        <button id="btnAudioToggle" class="sub-btn">🔊 SOUND: ON</button>
+        <button id="btnMusicToggle" class="sub-btn">🎵 BGM CHIPTUNE: ON</button>
+      </div>
+      <div class="viva-note">
+        💡 <em>Viva Tip: Top lines of <code>game.js</code> have instant difficulty & lives controls.</em>
+      </div>
+    </footer>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

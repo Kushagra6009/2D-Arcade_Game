@@ -1,0 +1,529 @@
+/* ========================================================
+   CAMPUS CYCLE RUSH — RETRO 2D ARCADE STYLING
+   Clean, authentic retro arcade design for Multimedia Lab
+   ======================================================== */
+
+:root {
+  --bg-dark: #0f1218;
+  --cabinet-bg: #181d26;
+  --cabinet-border: #2e384d;
+  --accent-gold: #ffbe0b;
+  --accent-cyan: #00f0ff;
+  --accent-green: #00e676;
+  --accent-red: #ff3366;
+  --text-main: #f0f4f8;
+  --text-muted: #8b9bb4;
+  --font-retro: 'Press Start 2P', monospace;
+  --font-ui: 'Outfit', sans-serif;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  user-select: none;
+}
+
+body {
+  background-color: var(--bg-dark);
+  color: var(--text-main);
+  font-family: var(--font-ui);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  padding: 16px;
+  background-image: 
+    radial-gradient(circle at 50% 10%, #1a2538 0%, #0d1117 75%);
+  overflow-x: hidden;
+}
+
+/* ARCADE CABINET CONTAINER */
+.arcade-cabinet {
+  width: 100%;
+  max-width: 600px;
+  background: var(--cabinet-bg);
+  border: 4px solid var(--cabinet-border);
+  border-radius: 16px;
+  box-shadow: 
+    0 20px 50px rgba(0, 0, 0, 0.7),
+    0 0 0 2px rgba(255, 255, 255, 0.05),
+    inset 0 2px 4px rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+/* CABINET HEADER */
+.cabinet-header {
+  padding: 16px 20px 12px;
+  text-align: center;
+  background: linear-gradient(180deg, #222a38 0%, #181e28 100%);
+  border-bottom: 2px solid var(--cabinet-border);
+}
+
+.header-badge {
+  font-family: var(--font-retro);
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: var(--accent-cyan);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.game-title {
+  font-family: var(--font-retro);
+  font-size: 20px;
+  color: var(--accent-gold);
+  text-shadow: 
+    2px 2px 0px #b38600,
+    0 0 10px rgba(255, 190, 11, 0.4);
+  letter-spacing: 1px;
+  margin-bottom: 4px;
+}
+
+.subtitle {
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+}
+
+/* GAMEPLAY VIEWPORT CONTAINER */
+.game-container {
+  position: relative;
+  width: 100%;
+  background: #000;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  border-bottom: 2px solid var(--cabinet-border);
+  overflow: hidden;
+}
+
+/* CANVAS ELEMENT */
+#gameCanvas {
+  display: block;
+  background-color: #272d37;
+  max-width: 100%;
+  height: auto;
+  aspect-ratio: 540 / 720;
+}
+
+/* HEADS UP DISPLAY (HUD) */
+.hud {
+  position: absolute;
+  top: 10px;
+  left: 12px;
+  right: 12px;
+  z-index: 10;
+  display: grid;
+  grid-template-columns: 1fr 1.3fr 1fr 1fr;
+  gap: 8px;
+  background: rgba(15, 19, 28, 0.88);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(4px);
+  padding: 8px 12px;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.hud-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.hud-label {
+  font-family: var(--font-retro);
+  font-size: 7px;
+  color: var(--text-muted);
+  letter-spacing: 1px;
+  margin-bottom: 3px;
+}
+
+.hud-value {
+  font-family: var(--font-retro);
+  font-size: 12px;
+  color: #fff;
+}
+
+#hudClock {
+  color: var(--accent-cyan);
+}
+
+#hudScore {
+  color: var(--accent-gold);
+}
+
+#hudDistance {
+  color: #fff;
+}
+
+/* ATTENDANCE BAR GAUGE */
+.bar-container {
+  width: 100%;
+  height: 9px;
+  background: #2a313e;
+  border-radius: 4px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  margin-bottom: 3px;
+}
+
+.bar-fill {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-red), var(--accent-gold), var(--accent-green));
+  transition: width 0.2s ease, background 0.3s ease;
+}
+
+#attendanceText {
+  font-size: 10px;
+  color: var(--accent-green);
+}
+
+/* POWERUP SHIELD NOTIFICATION */
+.powerup-badge {
+  position: absolute;
+  top: 68px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 12;
+  background: linear-gradient(90deg, #ff9900, #ff0055);
+  color: #fff;
+  font-family: var(--font-retro);
+  font-size: 9px;
+  padding: 6px 14px;
+  border-radius: 20px;
+  box-shadow: 0 0 15px rgba(255, 102, 0, 0.8);
+  display: none;
+  animation: pulseBadge 0.6s infinite alternate;
+  white-space: nowrap;
+}
+
+@keyframes pulseBadge {
+  0% { transform: translateX(-50%) scale(0.96); }
+  100% { transform: translateX(-50%) scale(1.04); }
+}
+
+/* OVERLAY MODAL SCREENS */
+.overlay-screen {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(10, 14, 20, 0.92);
+  z-index: 20;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+}
+
+.overlay-screen.active {
+  display: flex;
+}
+
+.overlay-box {
+  background: #171d27;
+  border: 2px solid #334055;
+  border-radius: 12px;
+  padding: 24px;
+  width: 100%;
+  max-width: 480px;
+  text-align: center;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.8);
+}
+
+.overlay-box.compact {
+  max-width: 360px;
+}
+
+.terminal-tag {
+  display: inline-block;
+  font-family: var(--font-retro);
+  font-size: 8px;
+  padding: 4px 10px;
+  background: rgba(255, 190, 11, 0.15);
+  color: var(--accent-gold);
+  border: 1px solid var(--accent-gold);
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.terminal-tag.danger {
+  background: rgba(255, 51, 102, 0.15);
+  color: var(--accent-red);
+  border-color: var(--accent-red);
+}
+
+.terminal-tag.success {
+  background: rgba(0, 230, 118, 0.15);
+  color: var(--accent-green);
+  border-color: var(--accent-green);
+}
+
+.overlay-box h2 {
+  font-family: var(--font-retro);
+  font-size: 16px;
+  color: #fff;
+  margin-bottom: 10px;
+  line-height: 1.4;
+}
+
+.mission-desc {
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--text-muted);
+  margin-bottom: 16px;
+}
+
+.mission-desc strong {
+  color: #fff;
+}
+
+/* RULES / GUIDE GRID */
+.guide-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 16px;
+  text-align: left;
+}
+
+.guide-col {
+  background: #121620;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #232b38;
+}
+
+.guide-col h3 {
+  font-family: var(--font-retro);
+  font-size: 8px;
+  color: var(--accent-cyan);
+  margin-bottom: 8px;
+  border-bottom: 1px dashed #2e384d;
+  padding-bottom: 4px;
+}
+
+.guide-item {
+  font-size: 11px;
+  color: #d1d9e6;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.guide-item .icon {
+  font-size: 14px;
+}
+
+/* CONTROLS GUIDE */
+.controls-panel {
+  background: #0f131a;
+  padding: 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  color: #8b9bb4;
+  margin-bottom: 18px;
+  line-height: 1.6;
+}
+
+.controls-panel code {
+  background: #252e3d;
+  color: var(--accent-gold);
+  padding: 2px 5px;
+  border-radius: 3px;
+  font-family: var(--font-retro);
+  font-size: 8px;
+}
+
+.touch-hint {
+  font-size: 10px;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+/* ARCADE BUTTONS */
+.arcade-btn {
+  width: 100%;
+  padding: 14px 20px;
+  font-family: var(--font-retro);
+  font-size: 11px;
+  letter-spacing: 1px;
+  background: var(--accent-gold);
+  color: #0d1117;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  box-shadow: 0 4px 0 #b38600, 0 6px 12px rgba(0, 0, 0, 0.4);
+  transition: all 0.1s ease;
+}
+
+.arcade-btn:hover {
+  filter: brightness(1.1);
+  transform: translateY(-1px);
+}
+
+.arcade-btn:active {
+  transform: translateY(3px);
+  box-shadow: 0 1px 0 #b38600;
+}
+
+.arcade-btn.secondary {
+  background: #2e384d;
+  color: #fff;
+  box-shadow: 0 4px 0 #1b212e;
+  margin-top: 10px;
+}
+
+.arcade-btn.retry-btn {
+  background: var(--accent-red);
+  color: #fff;
+  box-shadow: 0 4px 0 #b3143c;
+}
+
+.arcade-btn.victory-btn {
+  background: var(--accent-green);
+  color: #0d1117;
+  box-shadow: 0 4px 0 #00994f;
+}
+
+/* SCORE SUMMARY CARD */
+.results-card {
+  background: #11151e;
+  border: 1px solid #283344;
+  border-radius: 8px;
+  padding: 14px;
+  margin-bottom: 20px;
+}
+
+.result-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 6px 0;
+  font-size: 13px;
+  border-bottom: 1px solid #1c2433;
+}
+
+.result-row:last-child {
+  border-bottom: none;
+}
+
+.result-row strong {
+  font-family: var(--font-retro);
+  font-size: 12px;
+  color: var(--accent-gold);
+}
+
+.result-row .grade-text {
+  color: var(--accent-green);
+}
+
+/* PAUSE STATS */
+.pause-stats {
+  font-size: 13px;
+  color: #b0c0d4;
+  margin: 14px 0 20px;
+  line-height: 1.8;
+}
+
+/* ON-SCREEN TOUCH BUTTONS */
+.touch-controls {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 8px 12px;
+  background: #121620;
+}
+
+.touch-btn {
+  flex: 1;
+  padding: 10px 6px;
+  background: #252e3d;
+  color: #fff;
+  border: 1px solid #3b485e;
+  border-radius: 6px;
+  font-family: var(--font-retro);
+  font-size: 9px;
+  cursor: pointer;
+  transition: background 0.1s;
+}
+
+.touch-btn:active {
+  background: var(--accent-cyan);
+  color: #000;
+}
+
+.touch-btn.bell-btn {
+  background: #393220;
+  border-color: #735d1f;
+  color: var(--accent-gold);
+}
+
+/* FOOTER BAR */
+.cabinet-footer {
+  padding: 12px 18px;
+  background: #141922;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+
+.audio-toggle {
+  display: flex;
+  gap: 10px;
+}
+
+.sub-btn {
+  background: #202735;
+  color: var(--text-muted);
+  border: 1px solid #334055;
+  border-radius: 4px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.sub-btn:hover {
+  background: #2d374a;
+  color: #fff;
+}
+
+.viva-note {
+  font-size: 11px;
+  color: #6d809c;
+  text-align: center;
+}
+
+.viva-note code {
+  color: var(--accent-cyan);
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 500px) {
+  body {
+    padding: 6px;
+  }
+  .game-title {
+    font-size: 15px;
+  }
+  .hud {
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+  .guide-grid {
+    grid-template-columns: 1fr;
+  }
+}
